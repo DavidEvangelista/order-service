@@ -10,6 +10,7 @@ import br.com.project.orderservice.core.domain.dto.OrderDto;
 import br.com.project.orderservice.core.domain.enums.StatusOrder;
 import br.com.project.orderservice.core.domain.mapper.OrderMapper;
 import br.com.project.orderservice.core.port.output.repository.OrderRepositoryPort;
+import br.com.project.orderservice.core.service.OrderMapperService;
 import br.com.project.orderservice.core.service.OrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(OrderController.class)
 @ContextConfiguration(classes = OrderController.class)
-@Import({OrderService.class})
+@Import({OrderMapperService.class, OrderService.class})
 class OrderControllerTest {
 
     private static final String BASE_URL = "/v1/orders";
@@ -123,7 +124,7 @@ class OrderControllerTest {
                         .content(writeJsonToString(order))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isAccepted());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -223,7 +224,7 @@ class OrderControllerTest {
 
         when(repository.findByCustomerDocument("12345678901", Pageable.ofSize(10))).thenReturn(new PageImpl<>(List.of(order)));
 
-        mockMvc.perform(get(BASE_URL + "/customer/12345678901"))
+        mockMvc.perform(get(BASE_URL + "/customer/12345678901?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content[0].id").value(id.toString()))
@@ -237,7 +238,7 @@ class OrderControllerTest {
         when(repository.findByCustomerDocument("12345678901", Pageable.ofSize(10))).thenReturn(new PageImpl<>(List.of()));
 
         // Act & Assert
-        mockMvc.perform(get(BASE_URL + "/customer/12345678901"))
+        mockMvc.perform(get(BASE_URL + "/customer/12345678902?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
     }

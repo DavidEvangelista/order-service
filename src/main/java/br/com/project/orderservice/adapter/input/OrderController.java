@@ -6,6 +6,7 @@ import br.com.project.orderservice.core.port.input.ManagerOrderServicePort;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +39,8 @@ public class OrderController {
 
     @GetMapping("/customer/{document}")
     public Page<OrderDto> getOrdersByCustomerId(@PathVariable String document,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size) {
-        return orderService.getOrdersByCustomerDocument(document, page, size);
+                                                Pageable page) {
+        return orderService.getOrdersByCustomerDocument(document, page);
     }
 
 }

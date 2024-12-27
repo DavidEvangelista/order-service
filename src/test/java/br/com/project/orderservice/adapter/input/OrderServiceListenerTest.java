@@ -7,6 +7,7 @@ import br.com.project.orderservice.core.domain.dto.ItemDto;
 import br.com.project.orderservice.core.domain.dto.OrderDto;
 import br.com.project.orderservice.core.domain.mapper.OrderMapper;
 import br.com.project.orderservice.core.port.output.repository.OrderRepositoryPort;
+import br.com.project.orderservice.core.service.OrderMapperService;
 import br.com.project.orderservice.core.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class OrderServiceListenerTest {
     @InjectMocks
     OrderServiceListener orderServiceListener;
 
+    @InjectMocks
+    private OrderMapperService orderMapperService;
+
     @Mock
     RabbitTemplate rabbitTemplate;
     @Mock
@@ -41,7 +45,7 @@ class OrderServiceListenerTest {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(rabbitTemplate, repository, productService);
+        orderService = new OrderService(rabbitTemplate, repository, productService, orderMapperService);
         orderServiceListener = new OrderServiceListener(orderService);
     }
 

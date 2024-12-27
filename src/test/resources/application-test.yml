@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      database: orders_test
+
+services:
+  external-product-integration:
+    url: http://localhost:8081
